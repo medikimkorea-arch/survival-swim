@@ -1,0 +1,7 @@
+{
+  "name": "발달장애 아동 생존수영 체크리스트 분석기",
+  "description": "Halliwick 및 HAAR 기반 발달장애 아동 생존수영 44문항 평가, OII/GRI 지표 산출, 안전 플래그 감지 및 AI 특수체육 지도계획 수립 시스템",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+
