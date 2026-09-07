@@ -291,7 +291,7 @@ export const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({
         <h3 className="text-xs font-bold text-slate-800 mb-2.5 flex items-center justify-between">
           <span>9개 영역별 성취율 및 발달 밴드 현황</span>
           <span className="text-[11px] font-normal text-slate-500">
-            A~I 영역별 원점수 및 4점 만점 환산 성취율
+            A~I 영역별 원점수 및 1~5점 척도 환산 성취율 ((원점수−문항수)/(4×문항수)×100)
           </span>
         </h3>
 

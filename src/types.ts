@@ -5,6 +5,12 @@ export type InstructionMode = '1:1' | '그룹';
 export type DepthZone = '얕은' | '중간' | '깊은';
 export type ConditionStatus = '양호' | '보통' | '불안정';
 export type ItemType = 'support' | 'tolerance';
+export type AssistiveDeviceType =
+  | '팔뜨개·암밴드'
+  | '킥판'
+  | '부력조끼·구명조끼'
+  | '튜브·웨이트벨트'
+  | '기타';
 
 export type StageBand = '도입기' | '초기 적응기' | '기능 습득기' | '독립·일반화기';
 export type InstructionRecommendation = '1:1 지도 유지 권장' | '1:1 유지 + 부분 그룹 병행' | '그룹 편입 시도 가능';
@@ -29,9 +35,12 @@ export interface SessionInfo {
   duration_min: number;
   condition: ConditionStatus;
   notes: string;
+  assistive_device_used?: boolean;
+  assistive_device_types?: AssistiveDeviceType[];
+  assisted_items?: string[];
 }
 
-export type ScoreValue = 0 | 1 | 2 | 3 | 4 | null;
+export type ScoreValue = 1 | 2 | 3 | 4 | 5 | null;
 
 export interface ItemDefinition {
   code: string;

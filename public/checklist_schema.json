@@ -1,0 +1,143 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "AdaptedSwimmingChecklistSessionRecord",
+  "description": "발달장애(자폐성·지적장애) 아동 생존수영 회기별 평가 체크리스트 입력 레코드 스키마 (1~5점 척도)",
+  "type": "object",
+  "properties": {
+    "record_id": {
+      "type": "string",
+      "description": "기록 고유 식별자 (예: C001-S07)"
+    },
+    "child": {
+      "type": "object",
+      "description": "아동 기본 인적사항 및 특성",
+      "properties": {
+        "child_id": { "type": "string", "description": "아동 등록 식별 번호" },
+        "sex": { "type": "string", "enum": ["남", "여"] },
+        "birth_ym": { "type": "string", "pattern": "^\\d{4}-\\d{2}$", "description": "생년월 (YYYY-MM)" },
+        "age_years": { "type": "number", "minimum": 1, "description": "만 연령" },
+        "disability_type": {
+          "type": "string",
+          "enum": ["자폐성장애", "지적장애", "기타발달장애"]
+        },
+        "disability_level": {
+          "type": "string",
+          "enum": ["심함", "중간", "경도"]
+        },
+        "communication_level": {
+          "type": "string",
+          "enum": ["구어", "부분구어", "비구어(AAC)"]
+        }
+      },
+      "required": [
+        "child_id",
+        "sex",
+        "birth_ym",
+        "age_years",
+        "disability_type",
+        "disability_level",
+        "communication_level"
+      ]
+    },
+    "session": {
+      "type": "object",
+      "description": "회기 환경 및 지도 조건",
+      "properties": {
+        "date": { "type": "string", "format": "date", "description": "수업 일자 (YYYY-MM-DD)" },
+        "session_no": { "type": "integer", "minimum": 1, "description": "회기 차수" },
+        "instruction_mode": { "type": "string", "enum": ["1:1", "그룹"], "description": "지도 형태" },
+        "instructor_id": { "type": "string", "description": "담당 지도교사/치료사 코드" },
+        "water_temp_c": { "type": "number", "description": "수온 (섭씨)" },
+        "depth_zone": { "type": "string", "enum": ["얕은", "중간", "깊은"], "description": "수심 구역" },
+        "duration_min": { "type": "integer", "minimum": 1, "description": "수업 시간 (분)" },
+        "condition": { "type": "string", "enum": ["양호", "보통", "불안정"], "description": "아동 컨디션" },
+        "notes": { "type": "string", "description": "특이사항 및 비고" },
+        "assistive_device_used": { "type": "boolean", "description": "수중 보조기구 착용 여부" },
+        "assistive_device_types": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["팔뜨개·암밴드", "킥판", "부력조끼·구명조끼", "튜브·웨이트벨트", "기타"]
+          },
+          "description": "착용한 보조기구 종류 목록"
+        },
+        "assisted_items": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "보조기구를 착용하고 수행한 문항 코드 목록 (선택 입력, 예: ['F4', 'G2'])"
+        }
+      },
+      "required": [
+        "date",
+        "session_no",
+        "instruction_mode",
+        "instructor_id",
+        "water_temp_c",
+        "depth_zone",
+        "duration_min",
+        "condition"
+      ]
+    },
+    "scores": {
+      "type": "object",
+      "description": "44개 문항별 평정 점수 (1~5점 정수 또는 미실시 시 null)",
+      "properties": {
+        "A1": { "type": ["integer", "null"], "minimum": 1, "maximum": 5 },
+        "A2": { "type": ["integer", "null"], "minimum": 1, "maximum": 5 },
+        "A3": { "type": ["integer", "null"], "minimum": 1, "maximum": 5 },
+        "A4": { "type": ["integer", "null"], "minimum": 1, "maximum": 5 },
+        "B1": { "type": ["integer", "null"], "minimum": 1, "maximum": 5 },
+        "B2": { "type": ["integer", "null"], "minimum": 1, "maximum": 5 },
+        "B3": { "type": ["integer", "null"], "minimum": 1, "maximum": 5 },
+        "B4": { "type": ["integer", "null"], "minimum": 1, "maximum": 5 },
+        "B5": { "type": ["integer", "null"], "minimum": 1, "maximum": 5 },
+        "C1": { "type": ["integer", "null"], "minimum": 1, "maximum": 5 },
+        "C2": { "type": ["integer", "null"], "minimum": 1, "maximum": 5 },
+        "C3": { "type": ["integer", "null"], "minimum": 1, "maximum": 5 },
+        "C4": { "type": ["integer", "null"], "minimum": 1, "maximum": 5 },
+        "C5": { "type": ["integer", "null"], "minimum": 1, "maximum": 5 },
+        "D1": { "type": ["integer", "null"], "minimum": 1, "maximum": 5 },
+        "D2": { "type": ["integer", "null"], "minimum": 1, "maximum": 5 },
+        "D3": { "type": ["integer", "null"], "minimum": 1, "maximum": 5 },
+        "D4": { "type": ["integer", "null"], "minimum": 1, "maximum": 5 },
+        "D5": { "type": ["integer", "null"], "minimum": 1, "maximum": 5 },
+        "E1": { "type": ["integer", "null"], "minimum": 1, "maximum": 5 },
+        "E2": { "type": ["integer", "null"], "minimum": 1, "maximum": 5 },
+        "E3": { "type": ["integer", "null"], "minimum": 1, "maximum": 5 },
+        "E4": { "type": ["integer", "null"], "minimum": 1, "maximum": 5 },
+        "E5": { "type": ["integer", "null"], "minimum": 1, "maximum": 5 },
+        "F1": { "type": ["integer", "null"], "minimum": 1, "maximum": 5 },
+        "F2": { "type": ["integer", "null"], "minimum": 1, "maximum": 5 },
+        "F3": { "type": ["integer", "null"], "minimum": 1, "maximum": 5 },
+        "F4": { "type": ["integer", "null"], "minimum": 1, "maximum": 5 },
+        "F5": { "type": ["integer", "null"], "minimum": 1, "maximum": 5 },
+        "G1": { "type": ["integer", "null"], "minimum": 1, "maximum": 5 },
+        "G2": { "type": ["integer", "null"], "minimum": 1, "maximum": 5 },
+        "G3": { "type": ["integer", "null"], "minimum": 1, "maximum": 5 },
+        "G4": { "type": ["integer", "null"], "minimum": 1, "maximum": 5 },
+        "G5": { "type": ["integer", "null"], "minimum": 1, "maximum": 5 },
+        "H1": { "type": ["integer", "null"], "minimum": 1, "maximum": 5 },
+        "H2": { "type": ["integer", "null"], "minimum": 1, "maximum": 5 },
+        "H3": { "type": ["integer", "null"], "minimum": 1, "maximum": 5 },
+        "H4": { "type": ["integer", "null"], "minimum": 1, "maximum": 5 },
+        "H5": { "type": ["integer", "null"], "minimum": 1, "maximum": 5 },
+        "I1": { "type": ["integer", "null"], "minimum": 1, "maximum": 5 },
+        "I2": { "type": ["integer", "null"], "minimum": 1, "maximum": 5 },
+        "I3": { "type": ["integer", "null"], "minimum": 1, "maximum": 5 },
+        "I4": { "type": ["integer", "null"], "minimum": 1, "maximum": 5 },
+        "I5": { "type": ["integer", "null"], "minimum": 1, "maximum": 5 }
+      },
+      "additionalProperties": false
+    },
+    "na_items": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "미실시 문항 코드 목록"
+    },
+    "observation": {
+      "type": "string",
+      "description": "아동 행동 관찰 기록"
+    }
+  },
+  "required": ["child", "session", "scores"]
+}

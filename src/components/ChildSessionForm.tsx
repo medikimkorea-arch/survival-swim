@@ -7,9 +7,10 @@ import {
   CommunicationLevel,
   InstructionMode,
   DepthZone,
-  ConditionStatus
+  ConditionStatus,
+  AssistiveDeviceType
 } from '../types';
-import { User, Calendar, Droplets, ChevronDown, ChevronUp, AlertCircle } from 'lucide-react';
+import { User, Calendar, Droplets, ChevronDown, ChevronUp, AlertCircle, LifeBuoy, Check, Plus, X } from 'lucide-react';
 
 interface ChildSessionFormProps {
   child: ChildProfile;
@@ -19,6 +20,16 @@ interface ChildSessionFormProps {
   observation: string;
   setObservation: (obs: string) => void;
 }
+
+const DEVICE_OPTIONS: AssistiveDeviceType[] = [
+  '팔뜨개·암밴드',
+  '킥판',
+  '부력조끼·구명조끼',
+  '튜브·웨이트벨트',
+  '기타'
+];
+
+const COMMON_ASSISTED_ITEMS = ['F3', 'F4', 'F5', 'G1', 'G2', 'G3', 'G4', 'E3', 'H2'];
 
 export const ChildSessionForm: React.FC<ChildSessionFormProps> = ({
   child,
@@ -286,6 +297,178 @@ export const ChildSessionForm: React.FC<ChildSessionFormProps> = ({
                 </select>
               </div>
             </div>
+          </div>
+
+          {/* Section 2.5: Assistive Devices (보조기구 착용 여부) */}
+          <div className="pt-2 border-t border-slate-100 bg-slate-50/70 p-2.5 rounded border border-slate-200">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
+              <div className="flex items-center gap-1.5">
+                <LifeBuoy className="w-3.5 h-3.5 text-slate-700" />
+                <h3 className="text-[11px] font-bold text-slate-800 tracking-wider">
+                  수중 보조기구 착용 여부 (Assistive Devices)
+                </h3>
+                <span className="text-[10px] text-slate-500">
+                  (착용 상태 평정 시 '독립 부력' 오인 방지 및 용암법 계획 반영)
+                </span>
+              </div>
+
+              {/* Toggle: 착용 / 미착용 */}
+              <div className="flex items-center gap-1 bg-white p-0.5 rounded border border-slate-200 self-start sm:self-auto">
+                <button
+                  type="button"
+                  onClick={() =>
+                    setSession({
+                      ...session,
+                      assistive_device_used: false
+                    })
+                  }
+                  className={`h-6 px-2.5 text-xs font-semibold rounded transition-colors ${
+                    !session.assistive_device_used
+                      ? 'bg-slate-900 text-white shadow-2xs'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  미착용 (맨몸)
+                </button>
+                <button
+                  type="button"
+                  onClick={() =>
+                    setSession({
+                      ...session,
+                      assistive_device_used: true,
+                      assistive_device_types:
+                        session.assistive_device_types && session.assistive_device_types.length > 0
+                          ? session.assistive_device_types
+                          : ['팔뜨개·암밴드'],
+                      assisted_items: session.assisted_items ?? ['F4', 'G2']
+                    })
+                  }
+                  className={`h-6 px-2.5 text-xs font-semibold rounded transition-colors flex items-center gap-1 ${
+                    session.assistive_device_used
+                      ? 'bg-amber-600 text-white shadow-2xs'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  <LifeBuoy className="w-3 h-3" />
+                  착용함
+                </button>
+              </div>
+            </div>
+
+            {session.assistive_device_used && (
+              <div className="space-y-2 mt-2 pt-2 border-t border-slate-200">
+                {/* Device Types Multi-select */}
+                <div>
+                  <div className="text-[11px] font-medium text-slate-700 mb-1 flex items-center gap-1">
+                    <span>착용 보조기구 종류 (복수 선택 가능):</span>
+                    <span className="text-[10px] text-slate-400">
+                      ({session.assistive_device_types?.length || 0}개 선택됨)
+                    </span>
+                  </div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {DEVICE_OPTIONS.map((dev) => {
+                      const isChecked = session.assistive_device_types?.includes(dev) ?? false;
+                      return (
+                        <button
+                          key={dev}
+                          type="button"
+                          onClick={() => {
+                            const current = session.assistive_device_types || [];
+                            const updated = isChecked
+                              ? current.filter((t) => t !== dev)
+                              : [...current, dev];
+                            setSession({
+                              ...session,
+                              assistive_device_types: updated
+                            });
+                          }}
+                          className={`h-6 px-2 text-xs rounded border transition-all flex items-center gap-1 font-medium ${
+                            isChecked
+                              ? 'bg-slate-900 text-white border-slate-900 shadow-2xs'
+                              : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-100'
+                          }`}
+                        >
+                          {isChecked && <Check className="w-3 h-3" />}
+                          {dev}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Assisted Items Selector */}
+                <div>
+                  <div className="text-[11px] font-medium text-slate-700 mb-1 flex items-center justify-between">
+                    <span className="flex items-center gap-1">
+                      <span>보조기구 착용 후 수행한 문항 (assisted_items):</span>
+                      <span className="text-[10px] text-slate-400">
+                        (선택 입력 · 특히 F호흡·G부력 영역 권장)
+                      </span>
+                    </span>
+                    <span className="text-[10px] font-mono text-slate-500">
+                      현재 등록: {session.assisted_items?.length || 0}개
+                    </span>
+                  </div>
+
+                  {/* Active chips list */}
+                  <div className="flex flex-wrap items-center gap-1 mb-1.5 p-1.5 bg-white rounded border border-slate-200 min-h-[32px]">
+                    {session.assisted_items && session.assisted_items.length > 0 ? (
+                      session.assisted_items.map((code) => (
+                        <span
+                          key={code}
+                          className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-amber-50 text-amber-900 border border-amber-300 rounded text-[11px] font-mono font-bold"
+                        >
+                          {code}
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const updated = session.assisted_items?.filter((c) => c !== code) || [];
+                              setSession({ ...session, assisted_items: updated });
+                            }}
+                            className="text-amber-700 hover:text-amber-950"
+                            title={`${code} 제거`}
+                          >
+                            <X className="w-3 h-3" />
+                          </button>
+                        </span>
+                      ))
+                    ) : (
+                      <span className="text-[11px] text-slate-400 italic px-1">
+                        등록된 문항이 없습니다. 아래 빠른 추가 버튼을 누르거나 직접 코드를 입력하세요.
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Quick toggle chips */}
+                  <div className="flex flex-wrap items-center gap-1 text-[11px]">
+                    <span className="text-slate-500 text-[10px]">자주 착용하는 문항 빠른 추가:</span>
+                    {COMMON_ASSISTED_ITEMS.map((itemCode) => {
+                      const isAdded = session.assisted_items?.includes(itemCode) ?? false;
+                      return (
+                        <button
+                          key={itemCode}
+                          type="button"
+                          onClick={() => {
+                            const current = session.assisted_items || [];
+                            const updated = isAdded
+                              ? current.filter((c) => c !== itemCode)
+                              : [...current, itemCode];
+                            setSession({ ...session, assisted_items: updated });
+                          }}
+                          className={`h-5 px-1.5 text-[10px] font-mono rounded border transition-colors ${
+                            isAdded
+                              ? 'bg-amber-100 text-amber-900 border-amber-400 font-bold'
+                              : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-100'
+                          }`}
+                        >
+                          {isAdded ? `✓ ${itemCode}` : `+ ${itemCode}`}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Section 3: Observation & Session Notes */}

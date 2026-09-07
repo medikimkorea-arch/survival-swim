@@ -142,21 +142,21 @@ export const RUBRIC_INFO = {
   support: {
     title: '기술 수행(support) 루브릭',
     levels: [
-      { score: 0, label: '0점 - 수행불가/거부', desc: '과제 수행을 거부하거나 신체보조를 주어도 전혀 동작을 형성하지 못함' },
-      { score: 1, label: '1점 - 최대지원', desc: '지도자의 전적인 신체보조(Full physical prompt)로 과제 완수' },
-      { score: 2, label: '2점 - 중간지원', desc: '부분 신체보조(손목/허리 받침) 또는 반복적인 모델링·시각촉진 필요' },
-      { score: 3, label: '3점 - 최소지원', desc: '1~2회의 언어적 촉진이나 가벼운 제스처만으로 성공' },
-      { score: 4, label: '4점 - 독립수행', desc: '도움 없이 스스로 바른 자세로 수행하며 다른 환경에서도 일반화됨' }
+      { score: 1, label: '1점 - 수행불가/거부', desc: '과제 수행을 거부하거나 신체보조를 주어도 전혀 동작을 형성하지 못함' },
+      { score: 2, label: '2점 - 최대지원', desc: '지도자의 전적인 신체보조(Full physical prompt)로 과제 완수' },
+      { score: 3, label: '3점 - 중간지원', desc: '부분 신체보조(손목/허리 받침) 또는 반복적인 모델링·시각촉진 필요' },
+      { score: 4, label: '4점 - 최소지원', desc: '1~2회의 언어적 촉진이나 가벼운 제스처만으로 성공' },
+      { score: 5, label: '5점 - 독립수행', desc: '도움 없이 스스로 바른 자세로 수행하며 다른 환경에서도 일반화됨' }
     ]
   },
   tolerance: {
     title: '정서·감각(tolerance) 루브릭',
     levels: [
-      { score: 0, label: '0점 - 극심한 부정반응', desc: '패닉, 격렬한 울음, 도망 또는 물 밖으로 탈출 시도' },
-      { score: 1, label: '1점 - 강한 부정반응', desc: '지속적인 칭얼거림, 몸 굳어짐, 활동 재개에 상당한 시간 소요' },
-      { score: 2, label: '2점 - 중간 내성', desc: '초기 저항이 있으나 달램 및 시각단서 제공 시 재개 가능' },
-      { score: 3, label: '3점 - 경미한 반응', desc: '일시적 찌푸림이 있으나 스스로 호흡을 가다듬고 조절함' },
-      { score: 4, label: '4점 - 안정적 수용', desc: '불안이나 거부감 없이 즐겁고 편안하게 자극을 수용함' }
+      { score: 1, label: '1점 - 극심한 부정반응', desc: '패닉, 격렬한 울음, 도망 또는 물 밖으로 탈출 시도' },
+      { score: 2, label: '2점 - 강한 부정반응', desc: '지속적인 칭얼거림, 몸 굳어짐, 활동 재개에 상당한 시간 소요' },
+      { score: 3, label: '3점 - 중간 내성', desc: '초기 저항이 있으나 달램 및 시각단서 제공 시 재개 가능' },
+      { score: 4, label: '4점 - 경미한 반응', desc: '일시적 찌푸림이 있으나 스스로 호흡을 가다듬고 조절함' },
+      { score: 5, label: '5점 - 안정적 수용', desc: '불안이나 거부감 없이 즐겁고 편안하게 자극을 수용함' }
     ]
   }
 };
@@ -182,18 +182,21 @@ export const SAMPLE_SESSION_C001_S07: SessionRecord = {
     depth_zone: '얕은',
     duration_min: 40,
     condition: '보통',
-    notes: '입수 초반 5분 저항, 시각일정표 제시 후 진정.'
+    notes: '입수 초반 5분 저항, 시각일정표 제시 후 진정.',
+    assistive_device_used: true,
+    assistive_device_types: ['팔뜨개·암밴드', '킥판'],
+    assisted_items: ['F4', 'G2']
   },
   scores: {
-    A1: 2, A2: 1, A3: 2, A4: 2,
-    B1: 1, B2: 1, B3: 1, B4: 2, B5: 2,
-    C1: 2, C2: 3, C3: 1, C4: 2, C5: 3,
-    D1: 2, D2: 1, D3: 1, D4: 0, D5: 2,
-    E1: 2, E2: 2, E3: 3, E4: 1, E5: 1,
-    F1: 2, F2: 1, F3: 1, F4: 2, F5: 0,
-    G1: 1, G2: 0, G3: 0, G4: 0, G5: null,
-    H1: 2, H2: 1, H3: 1, H4: 2, H5: 2,
-    I1: 1, I2: 2, I3: 1, I4: 1, I5: 1
+    A1: 3, A2: 2, A3: 3, A4: 3,
+    B1: 2, B2: 2, B3: 2, B4: 3, B5: 3,
+    C1: 3, C2: 4, C3: 2, C4: 3, C5: 4,
+    D1: 3, D2: 2, D3: 2, D4: 1, D5: 3,
+    E1: 3, E2: 3, E3: 4, E4: 2, E5: 2,
+    F1: 3, F2: 2, F3: 2, F4: 3, F5: 1,
+    G1: 2, G2: 1, G3: 1, G4: 1, G5: null,
+    H1: 3, H2: 2, H3: 2, H4: 3, H5: 3,
+    I1: 2, I2: 3, I3: 2, I4: 2, I5: 2
   },
   na_items: ['G5'],
   observation: '얼굴에 물 닿는 자극(D2)에 회피 강함. 새우등뜨기는 신체보조 시 1~2초 유지. 그룹 소음에 예민.'
@@ -220,18 +223,21 @@ export const SAMPLE_SESSION_C001_S06: SessionRecord = {
     depth_zone: '얕은',
     duration_min: 40,
     condition: '불안정',
-    notes: '물소리와 수영장 울림에 불안감 지속. 데크에서 입수까지 15분 소요.'
+    notes: '물소리와 수영장 울림에 불안감 지속. 데크에서 입수까지 15분 소요.',
+    assistive_device_used: true,
+    assistive_device_types: ['팔뜨개·암밴드', '부력조끼·구명조끼'],
+    assisted_items: ['F3', 'F4', 'G1', 'G2']
   },
   scores: {
-    A1: 1, A2: 0, A3: 1, A4: 1,
-    B1: 0, B2: 0, B3: 1, B4: 1, B5: 1,
-    C1: 2, C2: 2, C3: 0, C4: 1, C5: 2,
-    D1: 1, D2: 0, D3: 0, D4: 0, D5: 1,
-    E1: 1, E2: 1, E3: 2, E4: 0, E5: 0,
-    F1: 1, F2: 0, F3: 0, F4: 1, F5: 0,
-    G1: 0, G2: 0, G3: 0, G4: 0, G5: null,
-    H1: 1, H2: 0, H3: 0, H4: 1, H5: 1,
-    I1: 0, I2: 1, I3: 0, I4: 0, I5: 0
+    A1: 2, A2: 1, A3: 2, A4: 2,
+    B1: 1, B2: 1, B3: 2, B4: 2, B5: 2,
+    C1: 3, C2: 3, C3: 1, C4: 2, C5: 3,
+    D1: 2, D2: 1, D3: 1, D4: 1, D5: 2,
+    E1: 2, E2: 2, E3: 3, E4: 1, E5: 1,
+    F1: 2, F2: 1, F3: 1, F4: 2, F5: 1,
+    G1: 1, G2: 1, G3: 1, G4: 1, G5: null,
+    H1: 2, H2: 1, H3: 1, H4: 2, H5: 2,
+    I1: 1, I2: 2, I3: 1, I4: 1, I5: 1
   },
   na_items: ['G5'],
   observation: '물에 들어가는 것 자체에 강한 저항. 물안경 착용 거부. 시각일정표 미도입 상태.'
@@ -249,8 +255,11 @@ Programme(수중 정신적응·균형·회전조절), HAAR(자폐 아동 수중�
 - child: child_id, sex, birth_ym, age_years, disability_type(자폐성장애/지적장애/기타발달장애),
   disability_level(심함/중간/경도), communication_level(구어/부분구어/비구어(AAC))
 - session: date, session_no, instruction_mode(1:1/그룹), instructor_id, water_temp_c,
-  depth_zone(얕은/중간/깊은), duration_min, condition(양호/보통/불안정), notes
-- scores: 44문항 점수. 각 문항 0~4 정수 또는 null(미실시)
+  depth_zone(얕은/중간/깊은), duration_min, condition(양호/보통/불안정), notes,
+  assistive_device_used(boolean: 착용 여부),
+  assistive_device_types(배열: 팔뜨개·암밴드 / 킥판 / 부력조끼·구명조끼 / 튜브·웨이트벨트 / 기타),
+  assisted_items(보조기구 착용 수행 문항 코드 배열, 예: ["F4","G2"])
+- scores: 44문항 점수. 각 문항 1~5 정수 또는 null(미실시)
 - na_items: 미실시 문항 코드 배열. observation: 행동관찰 자유서술
 
 ■ 44문항 정의 (코드 첫 글자 = 영역)
@@ -312,16 +321,17 @@ Programme(수중 정신적응·균형·회전조절), HAAR(자폐 아동 수중�
 E=수중 정신적응·균형, F=호흡·부력 조절, G=생존수영 핵심기술, H=안전·자기구조 인식,
 I=그룹참여·사회적 상호작용.
 
-■ 채점 루브릭(0~4점) — 참고용(점수는 입력에서 주어짐)
-support(기술 수행): 0 수행불가/거부 · 1 최대지원(전적 신체보조) · 2 중간지원(부분 신체보조/반복촉진)
- · 3 최소지원(언어·시각촉진 1~2회) · 4 독립수행(일반화)
-tolerance(정서·감각): 0 극심한 부정반응(패닉/회피) · 1 강한 부정반응 · 2 중간(촉진 시 재개)
- · 3 경미(스스로 조절) · 4 안정적 수용
+■ 채점 루브릭(1~5점) — 참고용(점수는 입력에서 주어짐)
+support(기술 수행): 1 수행불가/거부 · 2 최대지원(전적 신체보조) · 3 중간지원(부분 신체보조/반복촉진)
+ · 4 최소지원(언어·시각촉진 1~2회) · 5 독립수행(일반화)
+tolerance(정서·감각): 1 극심한 부정반응(패닉/회피) · 2 강한 부정반응 · 3 중간(촉진 시 재개)
+ · 4 경미(스스로 조절) · 5 안정적 수용
 
 ■ 계산 규칙 (반드시 이 순서)
 1. null 문항은 모든 계산에서 제외.
-2. 영역별: scored_items=비-null 문항수, raw_score=점수합, max_score=4×scored_items,
-   achievement_pct=round(raw_score/max_score×100, 1). scored_items=0이면 그 영역 제외.
+2. 영역별: scored_items=비-null 문항수, raw_score=점수합, max_score=5×scored_items,
+   achievement_pct=round(((raw_score - scored_items) / (4 * scored_items)) * 100, 1). scored_items=0이면 그 영역 제외.
+   (단, 최저점인 1점 평정 시 성취율은 정확히 0%, 최고점인 5점 평정 시 성취율은 100%가 됨)
 3. overall_independence_index(OII)=채점된 영역들의 achievement_pct 단순평균(소수1자리).
 4. group_readiness_index(GRI)=영역 B,C,D,I 의 achievement_pct 평균(소수1자리).
 5. 성취 밴드: 0–25 도입기 / 26–50 초기 적응기 / 51–75 기능 습득기 / 76–100 독립·일반화기.
@@ -329,22 +339,25 @@ tolerance(정서·감각): 0 극심한 부정반응(패닉/회피) · 1 강한 �
    GRI<40 → "1:1 지도 유지 권장"
    40≤GRI<65 → "1:1 유지 + 부분 그룹 병행"
    GRI≥65 → "그룹 편입 시도 가능"
-7. safety_flag=true 조건(하나라도): H영역 achievement_pct<40, 또는 H2≤1 또는 H3≤1,
-   또는 (D4≤1 이면서 session.depth_zone=="깊은"). true면 safety_reason에 사유 명시하고,
+7. safety_flag=true 조건(하나라도): H영역 achievement_pct<40, 또는 H2≤2 또는 H3≤2,
+   또는 (D4≤2 이면서 session.depth_zone=="깊은"). true면 safety_reason에 사유 명시하고,
    권고가 "그룹 편입 시도 가능"이라도 narrative_summary에서 '안전 목표 우선, 그룹 확대 보류' 권고.
 8. 여러 회기(배열): 같은 child_id를 session_no 오름차순으로 보고 최근 회기 기준으로 지표 산출.
    progress_note에 직전 회기 대비 영역별 Δ성취율·문항 주요변화(±1점 이상) 서술. 의미있는 진전=
    문항 +1 이상 또는 영역 +10%p 이상. 3회기 연속 정체·하락이면 '전략 재검토 필요' 명시.
    단일 회기면 progress_note에 "기저선(baseline) 회기"라고 서술.
+9. 보조기구(Assistive Devices) 평가 원칙 및 규칙:
+   - session.assistive_device_used가 true인 경우, 보조기구 착용 상태에서 나온 점수(특히 F·G 부력·뜨기 문항)는 '독립 부력'으로 오해하지 않도록 narrative_summary와 priority_needs에서 그 사실(보조기구 착용 및 의존성)을 반드시 명시할 것.
+   - 보조기구 착용 문항(assisted_items)은 next_session_goals에서 '점진적 보조기구 제거(용암법/Prompt & Device Fading: 암밴드 공기압 점진 감압, 킥판 파지 면적 축소, 부력재 분리 등)'를 핵심 중재 전략으로 제안할 것.
 
 ■ 해석·서술 규칙
-- strengths(2~4개): 상위 성취율 영역·4점 문항 근거.
-- priority_needs(2~4개): 하위 성취율 영역·0~1점 문항·안전플래그 근거. 안전관련 최우선 배치.
+- strengths(2~4개): 상위 성취율 영역·5점 문항 근거.
+- priority_needs(2~4개): 하위 성취율 영역·1~2점 문항·안전플래그 근거. 안전관련 최우선 배치. 보조기구 착용 시 보조기구 의존성 및 자력 수행 확인 필요성 명시.
 - next_session_goals(3~5개): 각 목표는 현 수준보다 한 단계 위 + 관찰가능하게 + strategy에
   특수체육·수중재활 중재전략(Halliwick 정신적응·회전조절, 백워드 체이닝, 시각적 일정표·PECS,
-  점진적 노출/둔감화, 신체보조 용암법 등) 명시.
+  점진적 노출/둔감화, 신체보조 용암법, 점진적 보조기구 제거(Device Fading) 등) 명시.
 - narrative_summary: 장애인복지관 사례기록 문체(정중한 '~함/~임' 또는 '~하였다')로 3~5문장.
-  낙인적 표현 금지, 강점 기반 기술.
+  낙인적 표현 금지, 강점 기반 기술. 보조기구 착용 시 독립 부력 오인 방지 및 용암법 계획을 반드시 서술.
 
 ■ 금지·주의
 - 형성평가·지도계획용이며 의학적 진단이 아니다. 진단·병명추정·예후단정 금지.

@@ -181,7 +181,7 @@ export default function App() {
   const handleReset = () => {
     const emptyScores: Record<string, ScoreValue> = {};
     CHECKLIST_ITEMS.forEach((item) => {
-      emptyScores[item.code] = 0;
+      emptyScores[item.code] = 1;
     });
     setScores(emptyScores);
     setNaItems([]);
@@ -301,6 +301,7 @@ export default function App() {
               setScores={setScores}
               naItems={naItems}
               setNaItems={setNaItems}
+              assistedItems={session.assistive_device_used ? session.assisted_items : undefined}
             />
 
             {/* Bottom floating summary / quick submit trigger */}

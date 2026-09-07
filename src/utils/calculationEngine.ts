@@ -45,8 +45,9 @@ export function calculateSingleSession(
     }
 
     if (scored_items > 0) {
-      const max_score = 4 * scored_items;
-      const achievement_pct = Math.round((raw_score / max_score) * 100 * 10) / 10;
+      const max_score = 5 * scored_items;
+      const achievement_pct =
+        Math.round(((raw_score - scored_items) / (4 * scored_items)) * 100 * 10) / 10;
       domainScores.push({
         domain: d,
         scored_items,
@@ -81,7 +82,7 @@ export function calculateSingleSession(
     instruction_recommendation = '1:1 유지 + 부분 그룹 병행';
   }
 
-  // 7. Safety Flag check
+  // 7. Safety Flag check (H < 40%, H2 <= 2, H3 <= 2, or (D4 <= 2 & 깊은 수심))
   const safetyReasons: string[] = [];
   const hDomain = domainScores.find((d) => d.domain === 'H');
   if (hDomain && hDomain.achievement_pct < 40) {
@@ -89,12 +90,12 @@ export function calculateSingleSession(
   }
 
   const h2Score = record.scores['H2'];
-  if (h2Score !== null && h2Score !== undefined && h2Score <= 1) {
+  if (h2Score !== null && h2Score !== undefined && h2Score <= 2) {
     safetyReasons.push(`H2(물에 빠졌을 때 벽·사다리 잡기) ${h2Score}점으로 위기 대응 미흡`);
   }
 
   const h3Score = record.scores['H3'];
-  if (h3Score !== null && h3Score !== undefined && h3Score <= 1) {
+  if (h3Score !== null && h3Score !== undefined && h3Score <= 2) {
     safetyReasons.push(`H3(도움 요청 행동/신호 보내기) ${h3Score}점으로 신체/음성 구조요청 취약`);
   }
 
@@ -103,7 +104,7 @@ export function calculateSingleSession(
     record.session.depth_zone === '깊은' &&
     d4Score !== null &&
     d4Score !== undefined &&
-    d4Score <= 1
+    d4Score <= 2
   ) {
     safetyReasons.push(`깊은 수심 구역에서 D4(수심 변화 수용) ${d4Score}점으로 패닉 위험`);
   }
@@ -165,14 +166,14 @@ export function calculateSingleSession(
     strengths.push(`${td.domain}영역(${meta.name}) 성취율 ${td.achievement_pct}% 달성 (${td.stage_band})`);
   });
 
-  // Check 4-point items
-  const perfectItems = CHECKLIST_ITEMS.filter((item) => record.scores[item.code] === 4);
+  // Check 5-point and 4-point items
+  const perfectItems = CHECKLIST_ITEMS.filter((item) => record.scores[item.code] === 5);
   if (perfectItems.length > 0) {
     strengths.push(`독립 수행 강점 문항: ${perfectItems.map((i) => `${i.code}(${i.title})`).slice(0, 2).join(', ')}`);
   } else {
-    const threeItems = CHECKLIST_ITEMS.filter((item) => record.scores[item.code] === 3);
-    if (threeItems.length > 0) {
-      strengths.push(`최소 촉진 수행 양호: ${threeItems.map((i) => `${i.code}(${i.title})`).slice(0, 2).join(', ')}`);
+    const fourItems = CHECKLIST_ITEMS.filter((item) => record.scores[item.code] === 4);
+    if (fourItems.length > 0) {
+      strengths.push(`최소 촉진 수행 양호: ${fourItems.map((i) => `${i.code}(${i.title})`).slice(0, 2).join(', ')}`);
     }
   }
 
@@ -182,6 +183,17 @@ export function calculateSingleSession(
     priority_needs.push(`[안전 최우선] ${safety_reason}`);
   }
 
+  // Assistive device check for priority needs
+  if (record.session.assistive_device_used) {
+    const devTypes = record.session.assistive_device_types?.join(', ') || '보조기구';
+    const assistedCodes = record.session.assisted_items && record.session.assisted_items.length > 0
+      ? record.session.assisted_items.join('·')
+      : '해당 문항';
+    priority_needs.push(
+      `[보조기구 착용 주의] ${devTypes} 착용 상태(${assistedCodes})에서 나온 점수는 '독립 부력'이 아니므로, 점진적 보조기구 제거(용암법·Fading)를 통한 자력 수행 확인 필요`
+    );
+  }
+
   const bottomDomains = [...domainScores].sort((a, b) => a.achievement_pct - b.achievement_pct).slice(0, 2);
   bottomDomains.forEach((bd) => {
     const meta = DOMAINS[bd.domain];
@@ -189,9 +201,9 @@ export function calculateSingleSession(
   });
 
   const lowItems = CHECKLIST_ITEMS.filter(
-    (item) => record.scores[item.code] === 0 || record.scores[item.code] === 1
+    (item) => record.scores[item.code] === 1 || record.scores[item.code] === 2
   );
-  if (lowItems.length > 0 && priority_needs.length < 4) {
+  if (lowItems.length > 0 && priority_needs.length < 5) {
     const nonSafetyLow = lowItems.filter((i) => !['H2', 'H3'].includes(i.code)).slice(0, 2);
     if (nonSafetyLow.length > 0) {
       priority_needs.push(`집중 중재 문항: ${nonSafetyLow.map((i) => `${i.code}(${i.title})`).join(', ')}`);
@@ -201,14 +213,27 @@ export function calculateSingleSession(
   // Next session goals with special PE strategies
   const next_session_goals: NextSessionGoal[] = [];
 
-  // Goal 1: Safety Wall Grab / Help Signal
-  if (h2Score !== null && h2Score !== undefined && h2Score <= 1) {
+  // Goal for assistive device fading if used
+  if (record.session.assistive_device_used) {
+    const devList = record.session.assistive_device_types?.join(', ') || '수중 보조기구';
+    const assistedFOrG = record.session.assisted_items?.filter((c) => c.startsWith('F') || c.startsWith('G')) || [];
+    const targetItemStr = assistedFOrG.length > 0 ? assistedFOrG.join('·') : '기본 뜨기 및 호흡';
+
+    next_session_goals.push({
+      domain: assistedFOrG[0]?.charAt(0) || 'G',
+      goal: `${devList} 착용 수행 문항(${targetItemStr})에서 보조기구 의존도를 단계적으로 줄여 독립적 수중 부력을 형성한다.`,
+      strategy: '점진적 보조기구 제거(용암법/Prompt & Device Fading): 암밴드 공기압 점진 감압, 킥판 파지 면적 축소 또는 부력재 분리형 조끼 패드 단계적 제거'
+    });
+  }
+
+  // Goal 1: Safety Wall Grab / Help Signal (H2 <= 2 or H3 <= 2)
+  if (h2Score !== null && h2Score !== undefined && h2Score <= 2) {
     next_session_goals.push({
       domain: 'H',
       goal: '물에 빠졌을 때 풀 벽면 또는 레인 로프를 잡고 고개를 들어 호흡을 확보한다.',
       strategy: '백워드 체이닝(Backward Chaining) 및 레인 로프 시각 표지판을 활용한 반복 비상 포획 훈련'
     });
-  } else if (h3Score !== null && h3Score !== undefined && h3Score <= 1) {
+  } else if (h3Score !== null && h3Score !== undefined && h3Score <= 2) {
     next_session_goals.push({
       domain: 'H',
       goal: '위기 상황 발생 시 손을 머리 위로 들고 큰 소리로 도움을 요청한다.',
@@ -216,14 +241,14 @@ export function calculateSingleSession(
     });
   }
 
-  // Goal 2: Sensory / Halliwick Mental Adaptation
-  if (d4Score !== null && d4Score !== undefined && d4Score <= 1) {
+  // Goal 2: Sensory / Halliwick Mental Adaptation (D4 <= 2 or D2 <= 2)
+  if (d4Score !== null && d4Score !== undefined && d4Score <= 2) {
     next_session_goals.push({
       domain: 'D',
       goal: '교사의 손을 잡고 수심이 점진적으로 깊어지는 경계 지점에서 5초간 안정 상태를 유지한다.',
       strategy: 'Halliwick 정신적응(Mental Adaptation) 원리에 따른 점진적 노출 및 수중 장난감 유도 기법'
     });
-  } else if (record.scores['D2'] !== null && record.scores['D2'] !== undefined && record.scores['D2'] <= 1) {
+  } else if (record.scores['D2'] !== null && record.scores['D2'] !== undefined && record.scores['D2'] <= 2) {
     next_session_goals.push({
       domain: 'D',
       goal: '얼굴에 손으로 물을 묻히거나 물방울이 닿았을 때 눈을 비비지 않고 3초 이상 안정성을 유지한다.',
@@ -237,14 +262,14 @@ export function calculateSingleSession(
     });
   }
 
-  // Goal 3: Breathing or Survival Float Core
-  if (record.scores['F1'] !== null && record.scores['F1'] !== undefined && record.scores['F1'] <= 2) {
+  // Goal 3: Breathing or Survival Float Core (F1 <= 3 or G1 <= 3)
+  if (record.scores['F1'] !== null && record.scores['F1'] !== undefined && record.scores['F1'] <= 3) {
     next_session_goals.push({
       domain: 'F',
       goal: '수면에 입술을 대고 바람을 불어 규칙적인 버블링(물방울 만들기)을 3회 연속 수행한다.',
       strategy: '탁구공 불기 놀이를 통한 시각적 피드백 제공 및 입술 오므리기 모델링 촉진'
     });
-  } else if (record.scores['G1'] !== null && record.scores['G1'] !== undefined && record.scores['G1'] <= 2) {
+  } else if (record.scores['G1'] !== null && record.scores['G1'] !== undefined && record.scores['G1'] <= 3) {
     next_session_goals.push({
       domain: 'G',
       goal: '부분 신체보조를 받아 양 무릎을 가슴으로 당겨 웅크린 새우등뜨기 자세를 3초간 유지한다.',
@@ -274,6 +299,13 @@ export function calculateSingleSession(
     narrative_summary += `비상 지지물 잡기 및 구조요청 등 안전 영역의 숙련도가 취약하여 안전 목표 달성 전까지 ${instruction_recommendation}을 유지하며 1:1 밀착 지도가 요구됨. `;
   } else {
     narrative_summary += `안전 규칙을 기본적으로 준수하며 향후 ${instruction_recommendation}에 따른 지도가 권고됨. `;
+  }
+  if (record.session.assistive_device_used) {
+    const devList = record.session.assistive_device_types?.join(', ') || '보조기구';
+    const assistedStr = record.session.assisted_items && record.session.assisted_items.length > 0
+      ? `(${record.session.assisted_items.join('·')} 문항)`
+      : '';
+    narrative_summary += `[보조기구 착용 특기사항] 본 회기 중 ${devList}를 착용하고 평가를 진행${assistedStr}하였으므로, 부력 및 이동 점수를 완전한 '독립 부력'으로 오해하지 않도록 유의해야 하며, 차기 회기부터 점진적 보조기구 제거(용암법/Fading)를 병행할 필요가 있음. `;
   }
   narrative_summary += `다음 회기에는 Halliwick 정신적응 및 감각 둔감화 전략을 병행하여 수중 안정성과 기본 생존 부력 기술을 단계적으로 형성해 나갈 계획임.`;
 

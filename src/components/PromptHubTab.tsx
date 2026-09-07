@@ -120,7 +120,14 @@ export const PromptHubTab: React.FC = () => {
               </tr>
               <tr>
                 <td className="py-1.5 px-2 font-medium text-slate-800">안전 플래그 (safety_flag)</td>
-                <td className="py-1.5 px-2 font-mono text-amber-700 font-bold">true (H2·H3 = 1점 취약)</td>
+                <td className="py-1.5 px-2 font-mono text-amber-700 font-bold">true (H2·H3 = 2점 취약, 기준 ≤ 2)</td>
+                <td className="py-1.5 px-2 text-emerald-600 font-bold">100% 일치 (검증 완료)</td>
+              </tr>
+              <tr>
+                <td className="py-1.5 px-2 font-medium text-slate-800">보조기구 중재 (용암법)</td>
+                <td className="py-1.5 px-2 text-slate-700">
+                  팔뜨개·암밴드, 킥판 (F4·G2 착용) → 독립 부력 오인 방지 및 점진적 보조기구 제거(용암법) 목표 반영
+                </td>
                 <td className="py-1.5 px-2 text-emerald-600 font-bold">100% 일치 (검증 완료)</td>
               </tr>
             </tbody>

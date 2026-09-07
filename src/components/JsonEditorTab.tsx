@@ -144,7 +144,7 @@ export const JsonEditorTab: React.FC<JsonEditorTabProps> = ({
 
         <div className="flex items-center justify-between mt-2 pt-2 border-t border-slate-100">
           <span className="text-[11px] text-slate-400">
-            문항 0~4 정수, 미실시는 null 표기 및 na_items에 등록
+            문항 1~5 정수, 미실시는 null 표기 및 na_items에 등록
           </span>
           <button
             type="button"

@@ -1,17 +1,13 @@
 import express from 'express';
 import path from 'path';
-import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
-import { GoogleGenAI, Type } from '@google/genai';
+import { GoogleGenAI } from '@google/genai';
 import { createServer as createViteServer } from 'vite';
 import { calculateSingleSession } from './src/utils/calculationEngine.ts';
 import { AI_STUDIO_SYSTEM_PROMPT, AI_STUDIO_RESPONSE_SCHEMA } from './src/constants/checklist.ts';
 import { SessionRecord } from './src/types.ts';
 
 dotenv.config();
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 async function startServer() {
   const app = express();

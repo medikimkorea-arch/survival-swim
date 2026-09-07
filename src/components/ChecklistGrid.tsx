@@ -8,7 +8,8 @@ import {
   HelpCircle,
   Sparkles,
   Award,
-  Layers
+  Layers,
+  LifeBuoy
 } from 'lucide-react';
 
 interface ChecklistGridProps {
@@ -16,13 +17,15 @@ interface ChecklistGridProps {
   setScores: React.Dispatch<React.SetStateAction<Record<string, ScoreValue>>>;
   naItems: string[];
   setNaItems: React.Dispatch<React.SetStateAction<string[]>>;
+  assistedItems?: string[];
 }
 
 export const ChecklistGrid: React.FC<ChecklistGridProps> = ({
   scores,
   setScores,
   naItems,
-  setNaItems
+  setNaItems,
+  assistedItems
 }) => {
   const [selectedDomain, setSelectedDomain] = useState<string>('ALL');
   const [rubricModalType, setRubricModalType] = useState<ItemType | null>(null);
@@ -91,7 +94,7 @@ export const ChecklistGrid: React.FC<ChecklistGridProps> = ({
                 44문항 영역별 평가 체크리스트
               </h2>
               <p className="text-[11px] text-slate-500 leading-none mt-0.5">
-                0~4점 평정 또는 미실시(N/A) · 총 44문항 중 {scoredCount}개 채점 완료 (N/A {naCount}개)
+                1~5점 평정 또는 미실시(N/A) · 총 44문항 중 {scoredCount}개 채점 완료 (N/A {naCount}개)
               </p>
             </div>
           </div>
@@ -190,7 +193,7 @@ export const ChecklistGrid: React.FC<ChecklistGridProps> = ({
 
           <div className="flex items-center gap-1 text-xs">
             <span className="text-slate-500 mr-1 text-[11px]">일괄 평정:</span>
-            {[4, 2, 1].map((val) => (
+            {[5, 4, 3, 2, 1].map((val) => (
               <button
                 key={val}
                 type="button"
@@ -217,6 +220,7 @@ export const ChecklistGrid: React.FC<ChecklistGridProps> = ({
           const currentScore = scores[item.code];
           const isNa = currentScore === null;
           const isSafetyCritical = ['H2', 'H3', 'D4'].includes(item.code);
+          const isAssisted = assistedItems?.includes(item.code) ?? false;
 
           return (
             <div
@@ -225,6 +229,8 @@ export const ChecklistGrid: React.FC<ChecklistGridProps> = ({
               className={`bg-white rounded border p-2.5 transition-all shadow-2xs ${
                 isSafetyCritical
                   ? 'border-amber-300 bg-amber-50/20'
+                  : isAssisted
+                  ? 'border-cyan-300 bg-cyan-50/20'
                   : 'border-slate-200'
               }`}
             >
@@ -251,6 +257,12 @@ export const ChecklistGrid: React.FC<ChecklistGridProps> = ({
                           안전핵심
                         </span>
                       )}
+                      {isAssisted && (
+                        <span className="text-[10px] font-bold px-1 py-0.2 rounded bg-cyan-50 text-cyan-800 border border-cyan-300 flex items-center gap-0.5" title="보조기구 착용 상태에서 수행">
+                          <LifeBuoy className="w-2.5 h-2.5 text-cyan-600" />
+                          보조기구 착용
+                        </span>
+                      )}
                       {item.frameworkNote && (
                         <span className="text-[10px] text-slate-400 font-mono">
                           [{item.frameworkNote}]
@@ -267,25 +279,29 @@ export const ChecklistGrid: React.FC<ChecklistGridProps> = ({
               {/* Score Button Group */}
               <div className="pt-1.5 border-t border-slate-100">
                 <div className="flex items-center justify-between text-[11px] text-slate-500 mb-1">
-                  <span className="text-[10px]">평정 (0~4)</span>
+                  <span className="text-[10px]">평정 (1~5)</span>
                   <span className="font-medium text-slate-700 text-[11px] truncate max-w-[200px]">
                     {currentScore === null
                       ? '미실시 (N/A)'
-                      : currentScore === 0
-                      ? item.type === 'support' ? '0점: 수행불가/거부' : '0점: 극심한 부정반응'
                       : currentScore === 1
-                      ? item.type === 'support' ? '1점: 최대지원' : '1점: 강한 부정반응'
+                      ? item.type === 'support' ? '1점: 수행불가/거부' : '1점: 극심한 부정반응'
                       : currentScore === 2
-                      ? item.type === 'support' ? '2점: 중간지원' : '2점: 중간 내성'
+                      ? item.type === 'support' ? '2점: 최대지원' : '2점: 강한 부정반응'
                       : currentScore === 3
-                      ? item.type === 'support' ? '3점: 최소지원' : '3점: 경미 반응'
-                      : item.type === 'support' ? '4점: 독립수행' : '4점: 안정적 수용'}
+                      ? item.type === 'support' ? '3점: 중간지원' : '3점: 중간 내성'
+                      : currentScore === 4
+                      ? item.type === 'support' ? '4점: 최소지원' : '4점: 경미 반응'
+                      : item.type === 'support' ? '5점: 독립수행' : '5점: 안정적 수용'}
                   </span>
                 </div>
 
                 <div className="grid grid-cols-6 gap-1">
-                  {[0, 1, 2, 3, 4].map((val) => {
+                  {[1, 2, 3, 4, 5].map((val) => {
                     const isSelected = currentScore === val;
+                    const rubricEntry =
+                      item.type === 'support'
+                        ? RUBRIC_INFO.support.levels.find((l) => l.score === val)
+                        : RUBRIC_INFO.tolerance.levels.find((l) => l.score === val);
                     return (
                       <button
                         key={val}
@@ -293,22 +309,18 @@ export const ChecklistGrid: React.FC<ChecklistGridProps> = ({
                         onClick={() => handleScoreChange(item.code, val as ScoreValue)}
                         className={`h-6 rounded text-xs font-mono font-bold transition-all border ${
                           isSelected
-                            ? val === 4
+                            ? val === 5
                               ? 'bg-slate-900 text-white border-slate-900 shadow-2xs ring-1 ring-slate-700'
-                              : val === 3
+                              : val === 4
                               ? 'bg-slate-800 text-white border-slate-800 shadow-2xs ring-1 ring-slate-600'
-                              : val === 2
+                              : val === 3
                               ? 'bg-amber-600 text-white border-amber-600 shadow-2xs ring-1 ring-amber-500'
-                              : val === 1
+                              : val === 2
                               ? 'bg-orange-600 text-white border-orange-600 shadow-2xs ring-1 ring-orange-500'
                               : 'bg-rose-600 text-white border-rose-600 shadow-2xs ring-1 ring-rose-500'
                             : 'bg-white hover:bg-slate-50 text-slate-700 border-slate-200'
                         }`}
-                        title={
-                          item.type === 'support'
-                            ? RUBRIC_INFO.support.levels[val].label
-                            : RUBRIC_INFO.tolerance.levels[val].label
-                        }
+                        title={rubricEntry ? rubricEntry.label : `${val}점`}
                       >
                         {val}
                       </button>
